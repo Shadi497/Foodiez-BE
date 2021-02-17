@@ -42,7 +42,7 @@ exports.categoryCreate = async (req, res, next) => {
 
 exports.ingredientCreate = async (req, res, next) => {
   try {
-    // req.body.categoryId = req.category.id;
+    req.body.categoryId = req.category.id;
     if (req.file) {
       req.body.image = `http://${req.get("host")}/media/${req.file.filename}`;
     }

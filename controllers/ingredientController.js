@@ -15,11 +15,6 @@ exports.ingredientList = async (req, res, next) => {
   try {
     const ingredients = await Ingredient.findAll({
       attributes: { exclude: ["createdAt", "updatedAt"] },
-      include: {
-        model: Category,
-        as: "category",
-        attributes: ["name"],
-      },
     });
     res.status(200).json(ingredients);
   } catch (error) {

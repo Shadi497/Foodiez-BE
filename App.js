@@ -3,6 +3,7 @@ const App = express();
 const db = require("./db/models");
 const ingredientRoutes = require("./routes/ingredients");
 const categoryRoutes = require("./routes/categories");
+const recipeRoutes = require("./routes/recipes");
 const cors = require("cors");
 const path = require("path");
 
@@ -10,6 +11,7 @@ App.use(express.json());
 App.use(cors());
 App.use("/ingredients", ingredientRoutes);
 App.use("/categories", categoryRoutes);
+App.use("/recipes", recipeRoutes);
 App.use("/media", express.static(path.join(__dirname, "media")));
 
 //Not Found
