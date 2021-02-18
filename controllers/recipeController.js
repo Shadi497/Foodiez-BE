@@ -29,15 +29,21 @@ exports.recipeList = async (req, res, next) => {
 
 exports.recipeCreate = async (req, res, next) => {
   try {
+    if (req.file) {
+      req.body.image = `http://${req.get("host")}/media/${req.file.filename}`;
+    }
+
     const newRecipe = await Recipe.create(req.body);
 
-    req.body.ingredients.map(async (ingredient) => {
-      const foundIngredient = await Ingredient.findByPk(ingredient.id);
+    if (req.body.ingredients) {
+      req.body.ingredients.map(async (ingredient) => {
+        const foundIngredient = await Ingredient.findByPk(ingredient.id);
 
-      await newRecipe.addIngredient(foundIngredient, {
-        through: "Ingredient_Recipes",
+        await newRecipe.addIngredient(foundIngredient, {
+          through: "Ingredient_Recipes",
+        });
       });
-    });
+    }
 
     res.status(201).json(newRecipe);
   } catch (error) {
