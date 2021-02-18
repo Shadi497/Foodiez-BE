@@ -15,11 +15,11 @@ exports.recipeList = async (req, res, next) => {
   try {
     const recipes = await Recipe.findAll({
       attributes: { exclude: ["createdAt", "updatedAt"] },
-      // include: {
-      //   model: Ingredient,
-      //   as: "ingredient",
-      //   attributes: ["name"],
-      // },
+      include: {
+        model: Ingredient,
+        as: "ingredients",
+        attributes: ["id"],
+      },
     });
     res.status(200).json(recipes);
   } catch (error) {
@@ -29,15 +29,37 @@ exports.recipeList = async (req, res, next) => {
 
 exports.recipeCreate = async (req, res, next) => {
   try {
-    req.body.ingredients = req.ingredient.recipes;
-    if (req.file) {
-      req.body.image = `http://${req.get("host")}/media/${req.file.filename}`;
-    }
     const newRecipe = await Recipe.create(req.body);
+
+    req.body.ingredients.map(async (ingredient) => {
+      const foundIngredient = await Ingredient.findByPk(ingredient.id);
+
+      await newRecipe.addIngredient(foundIngredient, {
+        through: "Ingredient_Recipes",
+      });
+    });
+
     res.status(201).json(newRecipe);
   } catch (error) {
     next(error);
   }
+  // req.body.name = req.recipe.name;
+
+  // if (req.file) {
+  //   req.body.image = `http://${req.get("host")}/media/${req.file.filename}`;
+  // }
+
+  // req.body format
+  // {
+  //   name: 'recipe1',
+  //   ingredients: [{
+  //      name: 'milk',
+  //      image: "img-url",
+  //     Ingredient_Recipes: {
+  //       selfGranted: true
+  //     }
+  //   }]
+  // }
 };
 
 exports.recipeDetail = async (req, res, next) => {

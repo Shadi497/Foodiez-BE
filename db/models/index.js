@@ -57,7 +57,7 @@ db.Ingredient.belongsToMany(db.Recipe, {
 });
 db.Recipe.belongsToMany(db.Ingredient, {
   through: "Ingredient_Recipes",
-  as: "ingredient",
+  as: "ingredients",
 });
 
 module.exports = db;
